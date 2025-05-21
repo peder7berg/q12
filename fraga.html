@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8" />
+  <title>Fråga</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      text-align: center;
+      background: #fff;
+      margin: 0;
+      padding: 20px;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+    }
+
+    .wrapper {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    .option {
+      position: relative;
+      width: 120px;
+      height: 120px;
+      margin: 10px;
+      border-radius: 20px;
+      background-color: #3498db;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 16px;
+    }
+
+    .option.clicked {
+      background-color: #f0f0f0;
+      color: black;
+      pointer-events: none;
+    }
+
+    .label {
+      margin-top: 10px;
+    }
+
+    .icon {
+      font-size: 24px;
+      margin-right: 8px;
+    }
+
+    .home {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      font-size: 24px;
+      background: none;
+      border: none;
+      cursor: pointer;
+    }
+
+    .home img {
+      width: 30px;
+      height: 30px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1 id="fraga-titel"></h1>
+  <div class="wrapper" id="alternativ-container"></div>
+
+  <button class="home" onclick="window.location.href='index.html'">
+    <img src="https://cdn-icons-png.flaticon.com/512/25/25694.png" alt="Hem" />
+  </button>
+
+  <script src="fragor.js"></script>
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const id = parseInt(params.get("id")) - 1;
+
+    const fraga = fragor[id];
+    document.getElementById("fraga-titel").textContent = fraga.titel;
+
+    // Blanda alternativen slumpmässigt
+    const blandade = [...fraga.alternativ].sort(() => Math.random() - 0.5);
+
+    const container = document.getElementById("alternativ-container");
+
+    blandade.forEach(alt => {
+      const div = document.createElement("div");
+      div.className = "option";
+      div.textContent = alt.label;
+
+      div.addEventListener("click", () => {
+        div.classList.add("clicked");
+
+        const ikon = document.createElement("span");
+        ikon.className = "icon";
+        ikon.textContent = alt.answer === "ja" ? "✅" : "❌";
+
+        const text = document.createElement("span");
+        text.textContent = alt.answer === "ja" ? "Ja" : "Nej";
+
+        div.textContent = "";
+        div.appendChild(ikon);
+        div.appendChild(text);
+      });
+
+      container.appendChild(div);
+    });
+  </script>
+</body>
+</html>
