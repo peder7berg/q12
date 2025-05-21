@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8">
+  <title>Skapa fråga</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      max-width: 600px;
+      margin: 40px auto;
+      padding: 20px;
+      background: #f9f9f9;
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 8px;
+      margin-top: 4px;
+    }
+
+    .alternativ {
+      display: flex;
+      gap: 10px;
+      margin-top: 5px;
+    }
+
+    .alternativ input[type="text"] {
+      flex: 2;
+    }
+
+    .alternativ select {
+      flex: 1;
+    }
+
+    button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      font-size: 16px;
+      background: #3498db;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    textarea {
+      margin-top: 30px;
+      width: 100%;
+      height: 200px;
+      font-family: monospace;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Skapa en ny fråga</h1>
+
+  <label for="fråga">Frågetitel</label>
+  <input type="text" id="fråga" placeholder="Ex: Vilka är huvudstäder?">
+
+  <div id="alternativ-container"></div>
+
+  <button onclick="läggTillAlternativ()">➕ Lägg till alternativ</button>
+  <br>
+  <button onclick="genereraKod()">🎉 Generera kod</button>
+
+  <textarea id="output" readonly placeholder="Här kommer koden..."></textarea>
+
+  <script>
+    const container = document.getElementById("alternativ-container");
+
+    // Lägg till 12 rader från början
+    for (let i = 0; i < 12; i++) läggTillAlternativ();
+
+    function läggTillAlternativ() {
+      const div = document.createElement("div");
+      div.className = "alternativ";
+      div.innerHTML = `
+        <input type="text" placeholder="Svar" />
+        <select>
+          <option value="ja">ja</option>
+          <option value="nej">nej</option>
+        </select>
+      `;
+      container.appendChild(div);
+    }
+
+    function genereraKod() {
+      const fråga = document.getElementById("fråga").value.trim();
+      if (!fråga) return alert("Du måste skriva en frågetitel!");
+
+      const alternativ = [];
+      const rows = container.querySelectorAll(".alternativ");
+      rows.forEach(row => {
+        const text = row.querySelector("input").value.trim();
+        const svar = row.querySelector("select").value;
+        if (text) {
+          alternativ.push({ label: text, answer: svar });
+        }
+      });
+
+      if (alternativ.length !== 12) {
+        alert("Du måste fylla i exakt 12 alternativ!");
+        return;
+      }
+
+      const frågaObjekt = {
+        titel: fråga,
+        alternativ: alternativ
+      };
+
+      const kod = JSON.stringify(frågaObjekt, null, 2);
+      document.getElementById("output").value = kod;
+    }
+  </script>
+
+</body>
+</html>
